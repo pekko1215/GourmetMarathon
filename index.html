@@ -3,11 +3,13 @@
 <head>
 	<title>グルメマラソン</title>
 </head>
-<body>
+<body style="margin:0;overflow: hidden;">
 	<game></game>
-	<script type="riot/tag" src="game.tag"></script>
+	<script type="riot/tag" src="/tags/game.tag"></script>
+	<script type="riot/tag" src="/tags/map.tag"></script>
     <script src="https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js"></script>
-
+    <script src="/script/AutoMapGenerator.js"></script>
+    <script src="/script/GameMap.js"></script>
     <script>
 		riot.mount('*')
 	</script>

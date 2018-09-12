@@ -1,9 +1,10 @@
-const Width = 100;
-const Height = 100;
+const Width = 70;
+const Height = 70;
 const MinWidth = 10;
 const MinHeight = 10;
 const MaxWidth = 20;
 const MaxHeight = 20;
+const WrapSize = 10;
 
 function AutoGenerator(){
 	var map = Array(Height).fill(0).map(d=>{
@@ -137,6 +138,13 @@ function AutoGenerator(){
 					map[y][b.x] = 'floor'
 				}
 		}
+	});
+	map.forEach(arr=>{
+		arr.unshift(...Array(WrapSize).fill('wall'));
+		arr.push(...Array(WrapSize).fill('wall'));
 	})
+	map.unshift(...Array(WrapSize).fill(Array(WrapSize*2+Width).fill('wall')));
+	map.push(...Array(WrapSize).fill(Array(WrapSize*2+Width).fill('wall')))
+
 	return map
 }
