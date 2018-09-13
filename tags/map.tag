@@ -8,12 +8,12 @@
 	<style scoped>
 		.line {
 			width:max-content;
-			height:5vw;
+			height:32px;
 		}
 		.chip{
 			display:inline-block;
-			width:5vw;
-			height:5vw;
+			width:32px;
+			height:32px;
 		}
 		.wall {
 			background:gray;
