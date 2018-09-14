@@ -125,6 +125,7 @@ var ItemData = [{
         "name": "なまやけぶたにく",
         "type": "use",
         "hp": 25,
+        "dropOnly":true,
         "text": "生焼けの豚肉。美味しくはない HP25回復",
         "rarity": 2,
         "chip": ""
@@ -133,6 +134,7 @@ var ItemData = [{
         "name": "こんがりぶたにく",
         "type": "use",
         "hp": 50,
+        "dropOnly":true,
         "text": "よく焼けた豚肉。あまりのおいしさに耐久アップ HP50回復 30ターンの間def+15",
         "rarity": 4,
         "effect": "def+15(30turn)",
@@ -142,6 +144,7 @@ var ItemData = [{
         "name": "こげぶたにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "text": "こげた豚肉。まずい HP10回復",
         "rarity": 1,
         "chip": ""
@@ -159,6 +162,7 @@ var ItemData = [{
         "name": "なまやけぎゅうにく",
         "type": "use",
         "hp": 25,
+        "dropOnly":true,
         "text": "生焼けの牛肉。美味しくはない HP25回復",
         "rarity": 2,
         "chip": ""
@@ -167,6 +171,7 @@ var ItemData = [{
         "name": "こんがりぎゅうにく",
         "type": "use",
         "hp": 50,
+        "dropOnly":true,
         "effect": "atk+15(30turn)",
         "text": "よく焼けた牛肉。あまりのおいしさに攻撃アップ HP50回復 30ターンの間atk+15",
         "rarity": 4,
@@ -176,6 +181,7 @@ var ItemData = [{
         "name": "こげぎゅうにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "text": "こげた牛肉。まずい HP10回復",
         "rarity": 1,
         "chip": ""
@@ -383,6 +389,7 @@ var ItemData = [{
         "name": "なまやけうさにく",
         "type": "use",
         "hp": 25,
+        "dropOnly":true,
         "text": "生焼けのうさぎ肉。美味しくはない HP25回復",
         "rarity": 2,
         "chip": ""
@@ -391,6 +398,7 @@ var ItemData = [{
         "name": "こんがりうさにく",
         "type": "use",
         "hp": 50,
+        "dropOnly":true,
         "text": "よく焼けたうさぎ肉。あまりのおいしさに攻撃アップ HP50回復 30ターンの間def+15",
         "rarity": 4,
         "effect": "atk+15(30turn)",
@@ -400,6 +408,7 @@ var ItemData = [{
         "name": "こげうさにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "text": "こげたうさぎ肉。まずい HP10回復",
         "rarity": 1,
         "chip": ""
@@ -408,6 +417,7 @@ var ItemData = [{
         "name": "なまやけばにく",
         "type": "use",
         "hp": 25,
+        "dropOnly":true,
         "text": "生焼けの馬肉。美味しくはない HP25回復",
         "rarity": 2,
         "chip": ""
@@ -416,6 +426,7 @@ var ItemData = [{
         "name": "こんがりばにく",
         "type": "use",
         "hp": 50,
+        "dropOnly":true,
         "text": "よく焼けた馬肉。あまりのおいしさに攻撃アップ HP50回復 30ターンの間def+15",
         "rarity": 4,
         "effect": "atk+15(30turn)",
@@ -425,6 +436,7 @@ var ItemData = [{
         "name": "こげばにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "text": "こげた馬肉。まずい HP10回復",
         "rarity": 1,
         "chip": ""
@@ -433,6 +445,7 @@ var ItemData = [{
         "name": "なまやけしかにく",
         "type": "use",
         "hp": 25,
+        "dropOnly":true,
         "text": "生焼けの鹿肉。美味しくはない HP25回復",
         "rarity": 2,
         "chip": ""
@@ -441,6 +454,7 @@ var ItemData = [{
         "name": "こんがりしかにく",
         "type": "use",
         "hp": 50,
+        "dropOnly":true,
         "text": "よく焼けた鹿肉。あまりのおいしさに攻撃アップ HP50回復 30ターンの間def+15",
         "rarity": 4,
         "effect": "atk+15(30turn)",
@@ -450,6 +464,7 @@ var ItemData = [{
         "name": "こげしかにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "text": "こげた鹿肉。まずい HP10回復",
         "rarity": 1,
         "chip": ""
@@ -458,6 +473,7 @@ var ItemData = [{
         "name": "なまやけししにく",
         "type": "use",
         "hp": 25,
+        "dropOnly":true,
         "text": "生焼けの猪肉。美味しくはない HP25回復",
         "rarity": 2,
         "chip": ""
@@ -466,6 +482,7 @@ var ItemData = [{
         "name": "こんがりししにく",
         "type": "use",
         "hp": 50,
+        "dropOnly":true,
         "text": "よく焼けた猪肉。あまりのおいしさに攻撃アップ HP50回復 30ターンの間def+15",
         "rarity": 4,
         "effect": "atk+15(30turn)",
@@ -475,6 +492,7 @@ var ItemData = [{
         "name": "こげししにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "text": "こげた猪肉。まずい HP10回復",
         "rarity": 1,
         "chip": ""
@@ -483,6 +501,7 @@ var ItemData = [{
         "name": "なまやけくまにく",
         "type": "use",
         "hp": 25,
+        "dropOnly":true,
         "text": "生焼けの熊肉。美味しくはない HP25回復",
         "rarity": 3,
         "chip": ""
@@ -491,6 +510,7 @@ var ItemData = [{
         "name": "こんがりくまにく",
         "type": "use",
         "hp": 50,
+        "dropOnly":true,
         "text": "よく焼けた熊肉。あまりのおいしさに攻防アップ HP50回復 30ターンの間 atk,def+30",
         "rarity": 5,
         "effect": "atk+30(30turn),def+30(30turn)",
@@ -500,6 +520,7 @@ var ItemData = [{
         "name": "こげくまにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "text": "こげた熊肉。まずい HP10回復",
         "rarity": 1,
         "chip": ""
@@ -526,6 +547,7 @@ var ItemData = [{
         "name": "なまやけへびにく",
         "type": "use",
         "hp": 25,
+        "dropOnly":true,
         "text": "生焼けの蛇肉。美味しくはない HP25回復",
         "rarity": 2,
         "chip": ""
@@ -534,6 +556,7 @@ var ItemData = [{
         "name": "こんがりへびにく",
         "type": "use",
         "hp": 50,
+        "dropOnly":true,
         "text": "よく焼けた蛇肉。あまりのおいしさに防アップ HP50回復 30ターンの間 def+20",
         "rarity": 4,
         "effect": "def+20(30turn)",
@@ -543,6 +566,7 @@ var ItemData = [{
         "name": "こげへびにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "text": "こげた蛇肉。まずい HP10回復",
         "rarity": 1,
         "chip": ""
