@@ -7,9 +7,15 @@ class MapChip {
 class Item {
 	constructor(obj){
 		Object.assign(this,obj);
-		this.name = obj.name;
-		this.chip = obj.chip;
-		this.text = obj.text;
+		this.canEquipment = false;
+		switch(obj.type){
+			case 'use':
+				this.__proto__ = Food.prototype;
+				break
+			case 'eq':
+				this.__proto__ = Equipment.prototype;
+			break
+		}
 	}
 	catch(){
 		setTimeout(()=>{
@@ -17,22 +23,32 @@ class Item {
 		})
 		player.items.push(this);
 	}
+	use(){
+		return 'このアイテムは使用することはできない'
+	}
 }
 
 class Food extends Item {
 	constructor(obj){
+		obj.type = 'food';
 		super(obj);
-		this.type = 'food';
-		this.hp = obj.hp;
 	}
-	eat(){
-
+	use(){
+		var point = ~~(player.maxhp * this.hp * 0.01);
+		if(player.hp + point >= player.maxhp){
+			point = player.maxhp - player.hp;
+		}
+		player.hp += point;
+		var idx = player.items.findIndex(item=>item.name == this.name);
+		player.items.splice(idx,1);
+		return `HPが ${point} 回復した`;
 	}
 }
 
 class Equipment extends Item{
 	constructor(obj){
-
+		obj.type = 'equipment';
+		super(obj);
 	}
 }
 
@@ -407,7 +423,7 @@ class GameMap {
 				'赤':[10,20,50,20, 0],
 				'金':[ 0, 0,35,60, 5]
 			}[chestType])+1;
-			var list = ItemData.filter(item=>item.rarity == chestLevel);
+			var list = ItemData.filter(item=>item.rarity == chestLevel).filter(data=>!data.dropOnly);
 			var item = list[~~(Math.random()*list.length)];
 			var pos = this.selectBlankChip();
 			var chest = new Chest(pos.x,pos.y,new Item(item),chestType);

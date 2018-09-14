@@ -16,6 +16,9 @@
     <div id="menuWindow" if="{menu}">
 		<div each="{m in menu}" class="menu {m.checked?'checked':''}">{m.text}</div>
 	</div>
+	<div id="infoWindow" if="{infoText}">
+		<div id="infoText">{infoText}</div>
+	</div>
     <script>
     window.scrollTo(0, 0);
     window.floor = 1;
@@ -36,6 +39,7 @@
         }[e.code];
         switch (command) {
             case 'action':
+				if(this.menu){this.menu.find(m=>m.checked).fn();}
                 var ret = player.action();
                 if (!ret) return;
                 switch (true) {
@@ -88,11 +92,15 @@
 	                }[command]
 	                if(!diff)return;
 	                var idx = this.menu.findIndex(d=>d.checked);
+	                // console.og(this.menu,idx)
 	                this.menu[idx].checked = false;
 	                idx += diff;
 	                idx = idx >= this.menu.length ? 0 : idx;
 	                idx = idx < 0 ? this.menu.length - 1 : idx;
 	                this.menu[idx].checked = true;
+					if(this.menu[idx].check){
+						this.menu[idx].check();
+					}
 	                this.update();
 				}else{
 					var $p = this.root.querySelector('.player > img');
@@ -118,15 +126,51 @@
             case 'menu':
 				if(this.menu){
 					this.menu = null;
+					this.infoText = null
 					this.update();
 					return;
 				}
-				Mapdata.createMenu([{
+				var itemMenu;
+				var defaultMenu;
+				Mapdata.createMenu(defaultMenu = [{
 					text:'アイテム',
-					fn(){}
+					fn:itemMenu = ()=>{
+						player.items.sort((a,b)=>{
+							return a.name<b.name?-1:1;
+						});
+						var arr = player.items.map(item=>{
+							return {
+								text:item.name,
+								check:()=>{
+									this.infoText = item.text
+								},
+								fn:()=>{
+									Mapdata.createMenu([{
+										text:'つかう',
+										fn:()=>{
+											var mes = item.use();
+											console.log(item)
+											itemMenu();
+											Mapdata.messageLog(mes)
+										}
+									},{
+										text:'すてる',
+										fn:()=>{}
+									}])
+								}
+							}
+						})
+						if(arr.length == 0){
+							this.infoText = 'アイテムがありません';
+							Mapdata.createMenu(defaultMenu)
+							this.update();
+						}else{
+							Mapdata.createMenu(arr)
+						}
+					}
 				},{
 					text:'ステータス',
-					fn(){}
+					fn:()=>{}
 				}])
             break
         }
@@ -204,6 +248,9 @@
     Mapdata.createMenu = (menu)=>{
 		menu[0].checked = true;
 		this.menu = menu;
+		if(this.menu[0].check){
+			this.menu[0].check();
+		}
 		this.update();
     }
     </script>
@@ -326,19 +373,19 @@
 
     #menuWindow {
         position: fixed;
-        width: 150px;
-        min-height: auto;
-        top: 7%;
-        left: 1%;
-        background: rgba(255, 255, 255, 0.8);
-        border: solid 2px black;
-        border-radius: 4%;
-        padding-top: 1%;
-        padding-bottom: 1%;
-        padding-left: 12px;
-        font-size: 23px;
-        transition: min-height 0.5s linear;
-
+		width: auto;
+		min-height: auto;
+		top: 7%;
+		left: 1%;
+		background: rgba(255, 255, 255, 0.8);
+		border: solid 2px black;
+		border-radius: 4%;
+		padding-top: 1%;
+		padding-bottom: 1%;
+		padding-left: 12px;
+		padding-right: 7px;
+		font-size: 23px;
+		transition: min-height 0.5s linear;
     }
 
     .menu.checked:before {
@@ -348,5 +395,17 @@
         margin-left: -10px;
         margin-top: 4px;
     }
+
+    #infoWindow{
+		position: fixed;
+		bottom: 0;
+		left: 42%;
+		height: 30%;
+		width: 57%;
+		background: rgba(255, 255, 255, 0.7);
+		font-size: 25px;
+		border: solid 2px;
+		padding: 4px;
+	}
     </style>
 </game>
