@@ -24,7 +24,36 @@
 			}[e.code];
 			if(!direction)return;
 			if(direction === 'action'){
-				player.action()
+				var ret = player.action();
+				if(!ret)return;
+				switch(true){
+					case ret.type === 'catch':
+						//入手
+						Mapdata.messageLog(`${ret.name}を手に入れた`)
+					break
+					case ret.type === 'atack':
+						//攻撃
+						var {damage,target} = ret;
+						var $e = document.createElement('div');
+						$e.innerText = damage;
+						$e.classList.add('damage')
+						$e.style.left = `${32 * target.x}px`;
+						$e.style.top = `${32 * target.y}px`;
+						this.root.appendChild($e);
+						setTimeout(()=>{
+							$e.style.opacity = 0;
+							$e.style.top = `${32 * target.y -32}px`;
+						})
+						eventCenter.fire();
+						delayd = true;
+						setTimeout(()=>{
+							$e.parentNode.removeChild($e)
+						},500)
+						setTimeout(()=>{
+							delayd = false;
+						},100)
+					break
+				}
 				return
 			}
 			var $p = this.root.querySelector('.player > img');
@@ -50,24 +79,31 @@
 			this.root.style.left = `calc(${-16 - 32 * player.x}px + 50vw)`
 			this.root.style.top = `calc(${-16 - 32 * player.y}px + 50vh)`
 			Mapdata.enemmys.forEach((enemmy,i)=>{
+				if(enemmy.died){
+					return
+				}
 				enemmy.turn();
 				var left = enemmy.x*32
 				var top = enemmy.y*32;
-				var $enemmy = this.root.querySelector('#enemmy'+i);
-				$enemmy.style.left = left + 'px';
-				$enemmy.style.top = top + 'px';
-				var $img = this.root.querySelector("#enemmy"+i+' > img');
+				enemmy.$.style.left = left + 'px';
+				enemmy.$.style.top = top + 'px';
 				var a = enemmy.animation();
-				$img.style.width = enemmy.width*100+'%'
-				$img.style.height = enemmy.height*100+'%';
-				$img.style.left = a.left + 'px';
-				$img.style.top = a.top + 'px';
-				$enemmy.style.width = a.width + 'px';
-				$enemmy.style.height = a.height + 'px';
+				enemmy.$img.style.width = enemmy.width*100+'%'
+				enemmy.$img.style.height = enemmy.height*100+'%';
+				enemmy.$img.style.left = a.left + 'px';
+				enemmy.$img.style.top = a.top + 'px';
+				enemmy.$.style.width = a.width + 'px';
+				enemmy.$.style.height = a.height + 'px';
 			})
 			// this.update();
 		})
 		Mapdata.bornEnemmy();
+		eventCenter.once(()=>{
+			Mapdata.enemmys.forEach((d,i)=>{
+				d.$ = this.root.querySelector('#enemmy'+i);
+				d.$img = this.root.querySelector("#enemmy"+i+' > img');
+			})
+		})
 		var idx = 0;
 		setInterval(()=>{
 			var $p = this.root.querySelector('.player > img');
@@ -92,11 +128,24 @@
 		.enemmy {
 			position:absolute;
 			overflow:hidden;
-			transition:top 0.1s linear,left 0.1s linear;
+			transition:top 0.1s linear,left 0.1s linear,opacity 0.1s linear;
+		}
+
+		.enemmy.died {
+			display:none;
 		}
 
 		.enemmy > img{
 			position:relative;
+		}
+
+		.damage {
+			position:absolute;
+			color:lightgreen;
+			font-size:28px;
+			opacity:1;
+			text-shadow: 2px 2px 0 #000;
+			transition:top 0.5s linear,left 0.5s linear,opacity 0.5s linear;
 		}
 
 		.player > img{

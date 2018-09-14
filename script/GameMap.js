@@ -65,9 +65,10 @@ class Actor {
         this.y = y;
         this.ev = ev;
         this.direction = '↓'
+        this.died = false;
     }
-    move(direction) {
-        var d = {
+    getTarget(direction = this.direction){
+		var d = {
             x: 0,
             y: 0
         }
@@ -100,6 +101,10 @@ class Actor {
                 d.y--;
                 d.x++;
         }
+        return d;
+    }
+    move(direction) {
+        var d = this.getTarget(direction);
         this.direction = direction;
         var target = Mapdata.getChip(this.x + d.x, this.y + d.y)
         if (Mapdata.canMove(this.x + d.x,this.y + d.y)) {
@@ -125,14 +130,25 @@ class Enemmy extends Actor {
 
 	}
 	damage(point){
-		this.hp -= getDamagePoint(point);
+		var damage = this.getDamagePoint(point);
+		this.hp -= damage
 		if(this.hp <= 0){
 			this.die();
 		}
+		return damage;
 	}
 	die(){
-		onDie()
+		this.onDie()
 		Mapdata.getChip(this.x,this.y).enemmy = null;
+		this.died = true;
+		if(this.$) {
+			this.$.style.opacity = 0;
+			var $ = this.$;
+			setTimeout(()=>{
+				$.parentNode.removeChild($)
+				this.$ = null;
+			},500)
+		}
 	}
 	onDie(){}
 	getDamagePoint(point){
@@ -221,9 +237,9 @@ class Player extends Actor {
     }
     action(){
 		if(Mapdata.getChip(this.x,this.y).drop){
-			this.catch();
+			return this.catch();
 		}else{
-			this.atack();
+			return this.atack();
 		}
     }
     catch(){
@@ -232,9 +248,14 @@ class Player extends Actor {
 		item.catch();
     }
     atack(){
-		var enemmy = Mapdata.getChip(this.x,this,y).enemmy;
-		if(!enemmy) return false;
-		enemmy.damage(this.getAttackPoint());
+		var d = this.getTarget();
+		var enemmy = Mapdata.getChip(this.x+d.x,this.y+d.y).enemmy;
+		if(!enemmy) return null;
+		return {
+			damage:enemmy.damage(this.getAttackPoint()),
+			target:enemmy,
+			type:'atack'
+		}
     }
     addItem(item){
 		this.items.push(item);
@@ -253,7 +274,7 @@ class GameMap {
         })
         this.width = this.map[0].length;
         this.height = this.map.length;
-        this.type = ['通常','モンスターハウス','ボーナス','偏り'][Lottery([7,80,8,5])];
+        this.type = ['通常','モンスターハウス','ボーナス','偏り'][Lottery([80,7,8,5])];
         this.enemmys = [];
     }
     getChip(x, y) {
@@ -305,5 +326,9 @@ class GameMap {
 			this.getChip(pos.x,pos.y).enemmy = enemmy;
 			this.enemmys.push(enemmy);
 		}
+    }
+    messageLog(message){
+		//メッセージ
+		console.log(message);
     }
 }
