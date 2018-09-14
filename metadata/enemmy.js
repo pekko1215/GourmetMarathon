@@ -47,4 +47,9 @@ EnemmyData.豚 = class extends Enemmy {
 		if(this.frame >= 4) this.frame = 0;
 		return ret;
 	}
+	drop(){
+		if(!rand(10)){
+			return new Item(ItemData.smartFilter('ぶたにく','name')[0]);
+		}
+	}
 }

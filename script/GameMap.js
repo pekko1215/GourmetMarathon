@@ -12,7 +12,9 @@ class Item {
 		this.text = obj.text;
 	}
 	catch(){
-		Mapdata.messageLog(`${this.name} を手に入れた`);
+		setTimeout(()=>{
+			Mapdata.messageLog(`${this.name} を手に入れた`);
+		})
 		player.items.push(this);
 	}
 }
@@ -164,6 +166,8 @@ class Enemmy extends Actor {
 				this.$ = null;
 			},500)
 		}
+		var item = this.drop();
+		if(item) item.catch();
 	}
 	onDie(){}
 	getDamagePoint(point){
@@ -185,6 +189,9 @@ class Enemmy extends Actor {
 	}
 	attack(point){
 		player.damage(point)
+	}
+	drop(){
+		return null;
 	}
 }
 
@@ -232,6 +239,7 @@ class Chest extends Enemmy {
 				top = -32 * 6;
 			break
 		}
+		top -= 8;
 		if(this.item){
 			return {
 				left,
@@ -254,6 +262,7 @@ class Player extends Actor {
     constructor(x, y, ev) {
         super(x, y, ev);
         this.hp = 30;
+        this.maxhp = 30;
         this.level = 1;
         this.items = [];
 		this.equipment = null;
@@ -411,4 +420,6 @@ class GameMap {
 		//メッセージ
 		
     }
+
+    createMenu(arr){}
 }
