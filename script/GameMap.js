@@ -117,11 +117,9 @@ class Actor {
         this.direction = direction;
         var target = Mapdata.getChip(this.x + d.x, this.y + d.y)
         if (Mapdata.canMove(this.x + d.x,this.y + d.y)) {
-            // this.ev.once(() => {
-				this.moved(this.x,this.y,this.x+d.x,this.y+d.y);
-                this.x += d.x;
-                this.y += d.y;
-            // })
+			this.moved(this.x,this.y,this.x+d.x,this.y+d.y);
+            this.x += d.x;
+            this.y += d.y;
             return true;
         } else {
             return false;
@@ -369,6 +367,40 @@ class GameMap {
 			this.enemmys.push(enemmy);
 		}
     }
+    bornChest(){
+		var count = 0;
+		var chestTypeTable;
+		switch(this.type){
+			case '通常':
+				count = 12 + rand(5);
+				chestTypeTable = [94,5,1];
+			case '偏り':
+				count = 12 + rand(5);
+				chestTypeTable = [70,25,5];
+				break
+			case 'モンスターハウス':
+				count = 15 + rand(6);
+				chestTypeTable = [90,8,2];
+				break
+			case 'ボーナス':
+				count = 24 + rand(7);
+				chestTypeTable = [94,5,1];
+		}
+		var name;
+		for(var i = 0;i < count; i++){
+			var chestType = ['木','赤','金'][Lottery(chestTypeTable)];
+			var chestLevel = {
+				'木':[70,30, 0, 0, 0],
+				'赤':[10,20,50,20, 0],
+				'金':[ 0, 0,35,60, 5]
+			}
+			var pos = this.selectBlankChip();
+			var chest = new Chest[name](pos.x,pos.y,eventCenter);
+			this.getChip(pos.x,pos.y).enemmy = enemmy;
+			this.enemmys.push(enemmy);
+		}
+    }
+
     messageLog(message){
 		//メッセージ
 		
