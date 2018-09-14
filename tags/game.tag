@@ -6,6 +6,8 @@
 	<div class="enemmy" each="{e,i in Mapdata.enemmys}" id="enemmy{i}">
 		<img src="{e.chip}">
 	</div>
+	<div id="messageWindow">
+	</div>
 	<script>
 		window.scrollTo(0,0)
 		window.Mapdata = new GameMap(AutoGenerator());
@@ -29,7 +31,7 @@
 				switch(true){
 					case ret.type === 'catch':
 						//入手
-						Mapdata.messageLog(`${ret.name}を手に入れた`)
+						Mapdata.messageLog(`${ret.name} を手に入れた`)
 					break
 					case ret.type === 'atack':
 						//攻撃
@@ -44,6 +46,10 @@
 							$e.style.opacity = 0;
 							$e.style.top = `${32 * target.y -32}px`;
 						})
+						Mapdata.messageLog(`${target.name} に ${damage} ダメージ`);
+						if(target.died){
+							Mapdata.messageLog(`${target.name} をたおした`);
+						}
 						eventCenter.fire();
 						delayd = true;
 						setTimeout(()=>{
@@ -104,6 +110,37 @@
 				d.$img = this.root.querySelector("#enemmy"+i+' > img');
 			})
 		})
+		Mapdata.messageLog = (message)=>{
+			var $window = this.root.querySelector('#messageWindow')
+			var $e = document.createElement('div');
+			$e.classList.add('message')
+			$e.innerHTML = message;
+			$window.insertBefore($e,$window.firstChild);
+			setTimeout(()=>{
+				$e.style.maxHeight = '0px';
+				setTimeout(()=>{
+					// $window.removeChild($e)
+				},100)
+			},3000)
+		}
+		player.onDamage = (point)=>{
+			var $e = document.createElement('div');
+			$e.innerText = point;
+			$e.classList.add('damage')
+			$e.classList.add('me')
+			$e.style.left = `50%`;
+			$e.style.top = `50%`;
+			this.root.appendChild($e);
+			setTimeout(()=>{
+				$e.style.opacity = 0;
+				$e.style.top = `calc(50% - 32px)`;
+			})
+			Mapdata.messageLog(`${point} ダメージを受けた`);
+			delayd = true;
+			setTimeout(()=>{
+				$e.parentNode.removeChild($e)
+			},500)
+		}
 		var idx = 0;
 		setInterval(()=>{
 			var $p = this.root.querySelector('.player > img');
@@ -111,8 +148,15 @@
 			idx++;
 			idx = idx < 4 ? idx :0;
 		},200);
+		setTimeout(()=>{
+			eventCenter.fire();
+		})
 	</script>
 	<style scoped>
+		@font-face {
+			font-family:PixelMplus;
+			src: url(/font/PixelMplus10-Regular.ttf);
+		}
 		.player {
 			position: fixed;
 			width: 32px;
@@ -148,6 +192,11 @@
 			transition:top 0.5s linear,left 0.5s linear,opacity 0.5s linear;
 		}
 
+		.damage.me {
+			color:red;
+			position:fixed;
+		}
+
 		.player > img{
 			width:300%;
 			height:400%;
@@ -170,11 +219,32 @@
 			position:relative;
 			top:-96px;
 		}
+
+		#messageWindow{
+			position: fixed;
+			bottom: 0;
+			left: 1%;
+			height: 30%;
+			width: 40%;
+			background: rgba(209, 255, 210, 0.7);
+			font-size: 25px;
+			border: solid 2px;
+			padding: 4px;
+			border-radius: 3%;
+		}
+
+		.message {
+			transition:max-height 0.1s linear;
+			margin-top:2%;
+			max-height:25px;
+			overflow:hidden;
+		}
 		:scope{
 			position: absolute;
 			left: -2.5vw;
 			top: -7.5vw;
 			transition:top 0.1s linear,left 0.1s linear;
+			font-family:PixelMplus;
 		}
 	</style>
 </game>

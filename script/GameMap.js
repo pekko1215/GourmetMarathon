@@ -67,6 +67,15 @@ class Actor {
         this.direction = '↓'
         this.died = false;
     }
+    getDirectionByTarget(px,py){
+		var x = px - this.x;
+		var y = py - this.y;
+		var up = y < 0 ? -y : 0;
+		var down = y > 0 ? y : 0;
+		var right = x > 0 ? x : 0;
+		var left = x < 0 ? -x : 0;
+		return ['↑','↓','→','←'][[up,down,right,left].findIndex(d=>d)];
+    }
     getTarget(direction = this.direction){
 		var d = {
             x: 0,
@@ -135,8 +144,10 @@ class Enemmy extends Actor {
 		if(this.hp <= 0){
 			this.die();
 		}
+		this.onDamage(damage)
 		return damage;
 	}
+	onDamage(){}
 	die(){
 		this.onDie()
 		Mapdata.getChip(this.x,this.y).enemmy = null;
@@ -159,6 +170,17 @@ class Enemmy extends Actor {
 		var chip2 = Mapdata.getChip(x2,y2);
 		chip1.enemmy = null;
 		chip2.enemmy = this;
+	}
+	isContactPlayer(){
+		var x = player.x - this.x;
+		var y = player.y - this.y
+		if((x == 0 && y*y == 1) || (y == 0 && x*x == 1)){
+			return {x,y};
+		}
+		return false;
+	}
+	attack(point){
+		player.damage(point)
 	}
 }
 
@@ -257,6 +279,26 @@ class Player extends Actor {
 			type:'atack'
 		}
     }
+    damage(point){
+		this.hp -= this.getDamagePoint(point);
+		this.onDamage(point);
+		if(this.hp <= 0){
+			this.die();
+		}
+    }
+
+    getDamagePoint(point){
+		return point;
+    }
+
+    onDamage(){
+
+    }
+
+    die(){
+		Mapdata.gameOver();
+    }
+
     addItem(item){
 		this.items.push(item);
     }
@@ -329,6 +371,6 @@ class GameMap {
     }
     messageLog(message){
 		//メッセージ
-		console.log(message);
+		
     }
 }
