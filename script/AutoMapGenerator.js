@@ -1,5 +1,5 @@
-const Width = 70;
-const Height = 70;
+const Width = 50;
+const Height = 50;
 const MinWidth = 10;
 const MinHeight = 10;
 const MaxWidth = 20;
@@ -12,63 +12,6 @@ function AutoGenerator(){
 			return 'wall';
 		})
 	})
-	var Rect = class{
-		constructor(x,y,width,height){
-			this.x = x;
-			this.y = y;
-			this.width = width;
-			this.height = height;
-		}
-		included(x,y){
-			return x >= this.x &&
-				   x <= this.x + this.width &&
-				   y >= this.y &&
-				   y <= this.y + this.height
-		}
-		separate(){
-			var direction = ['縦','横'][~~(Math.random()*2)];
-			if(MinWidth * 2 > this.width && direction == '縦'){
-				direction = '横';
-			}
-			if(MinHeight * 2 > this.height && direction == '横'){
-				direction = '縦'
-			}
-			if(MinHeight * 2 > this.height &&
-			   MinWidth * 2 > this.width ){
-				return false;
-			}
-			this.direction = direction;
-			switch(direction){
-				case '縦':
-					while(true){
-						var idx = MinWidth + ~~(Math.random()*(this.width - MinWidth * 2));
-						if(idx < MaxWidth) break
-					}
-					var tmp = this.width;
-					this.width = idx;
-					return new Rect(
-						this.x + idx,
-						this.y,
-						tmp - idx,
-						this.height
-					);
-				break
-				case '横':
-					while(true){
-						var idx = MinHeight + ~~(Math.random()*(this.height - MinHeight * 2));
-						if(idx < MaxWidth) break
-					}
-					var tmp = this.height;
-					this.height = idx;
-					return new Rect(
-						this.x,
-						this.y + idx,
-						this.width,
-						tmp - idx
-					);
-			}
-		}
-	}
 	var list = [new Rect(0,0,Width,Height)];
 	var last = list[0];
 	// list.push(list[0].separate())

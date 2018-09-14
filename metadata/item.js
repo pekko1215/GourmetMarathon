@@ -351,7 +351,7 @@ var ItemData = [{
         "hp": 10,
         "dropOnly":true,
         "effect": "毒",
-        "text": "生の馬肉。腹壊すよ HP10回復 毒付与",
+        "text": "生の馬肉。馬刺しは美味しいのだ HP10回復",
         "rarity": 2,
         "chip": ""
     },

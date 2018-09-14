@@ -14,6 +14,7 @@ class Item {
 				break
 			case 'eq':
 				this.__proto__ = Equipment.prototype;
+				this.canEquipment = true;
 			break
 		}
 	}
@@ -41,14 +42,28 @@ class Food extends Item {
 		player.hp += point;
 		var idx = player.items.findIndex(item=>item.name == this.name);
 		player.items.splice(idx,1);
+		eventCenter.fire();
 		return `HPが ${point} 回復した`;
 	}
 }
 
 class Equipment extends Item{
 	constructor(obj){
+		this.canEquipment = true;
 		obj.type = 'equipment';
+		this.slot = -1;
 		super(obj);
+	}
+	equipment(slot){
+		if(player.equipments[slot]){
+			var old = player.equipments[slot];
+			old.slot = -1;
+			old.isEquipment = false;
+		}
+		player.equipments[slot] = this;
+		this.slot = slot;
+		this.isEquipment = true;
+		return `${this.name} をそうびした`
 	}
 }
 
@@ -165,6 +180,7 @@ class Enemmy extends Actor {
 		this.hp -= damage
 		if(this.hp <= 0){
 			this.die();
+			player.getExp(this.exp)
 		}
 		this.onDamage(damage)
 		return damage;
@@ -203,8 +219,8 @@ class Enemmy extends Actor {
 		}
 		return false;
 	}
-	attack(point){
-		player.damage(point)
+	atack(point){
+		player.damage(~~point)
 	}
 	drop(){
 		return null;
@@ -233,7 +249,7 @@ class Chest extends Enemmy {
 		this.rank = rank;
 		this.width = 12;
 		this.height = 8;
-		this.hp = 1;
+		this.hp = 0;
 		this.chip = '/image/chip/chest.png';
 	}
 	onDamage(){
@@ -275,19 +291,30 @@ class Chest extends Enemmy {
 }
 
 class Player extends Actor {
-    constructor(x, y, ev) {
+    constructor(x, y, ev,old = {}) {
         super(x, y, ev);
         this.hp = 30;
         this.maxhp = 30;
         this.level = 1;
+        this.atk = 1;
+        this.def = 1;
+        this.exp = 0;
+        this.nextExp = 10
         this.items = [];
-		this.equipment = null;
+        this.equipmentSlot = 2;
+        this.equipments = [];
+        Object.assign(this,old)
     }
     action(){
+		var ret;
 		if(Mapdata.getChip(this.x,this.y).drop){
 			return this.catch();
 		}else{
-			return this.atack();
+			ret = this.atack();
+			if(!ret && Mapdata.getChip(this.x,this.y).isStairs){
+				Mapdata.nextFloor();
+			}
+			return ret;
 		}
     }
     catch(){
@@ -314,7 +341,43 @@ class Player extends Actor {
     }
 
     getDamagePoint(point){
-		return point;
+		var p = this.equipments.filter(d=>d).reduce((a,b)=>a+(b.def||0),0) + this.def;
+		return Math.ceil(point*Math.pow(0.99,p));
+    }
+
+    getExp(exp){
+		if(!exp)return;
+		this.exp += exp;
+		if(this.exp >= this.nextExp){
+			var e = this.exp - this.nextExp;
+			this.exp = 0;
+			this.levelUp();
+			this.getExp(e);
+		}
+    }
+
+    levelUp(){
+		var oldatk = ~~this.atk;
+		var olddef = ~~this.def;
+		var oldmaxhp = ~~this.maxhp;
+		this.level ++;
+		this.def *= 1+Math.random()*0.5;
+		this.atk *= 1+Math.random()*0.5;
+		this.maxhp *= 1+Math.random()*0.5;
+		this.nextExp *= 1.4;
+
+		setTimeout(()=>{
+			if(~~this.atk != oldatk){
+				Mapdata.messageLog(`HP ${oldatk}→${~~this.atk} (+${~~this.atk-oldatk})`);
+			}
+			if(~~this.def != olddef){
+				Mapdata.messageLog(`def ${olddef}→${~~this.def} (+${~~this.def-olddef})`);
+			}
+			if(~~this.maxhp != oldmaxhp){
+				Mapdata.messageLog(`MAXHP ${oldmaxhp}→${~~this.maxhp} (+${~~this.maxhp-oldmaxhp})`);
+			}
+			Mapdata.messageLog(`レベルアップ! Lv ${this.level-1}→${this.level}`);
+		})
     }
 
     onDamage(){
@@ -329,12 +392,13 @@ class Player extends Actor {
 		this.items.push(item);
     }
 	getAttackPoint(){
-		return 1;
+		var p = this.equipments.filter(d=>d).reduce((a,b)=>a+(b.atk||0),0);
+		return ~~(this.atk * Math.pow(1.01,p) * (0.8 + Math.random()*0.4));
     }
 }
 
 class GameMap {
-    constructor(map) {
+    constructor(map,floor) {
         this.map = map.map(arr => {
             return arr.map(d => {
                 return new MapChip(d);
@@ -344,6 +408,8 @@ class GameMap {
         this.height = this.map.length;
         this.type = ['通常','モンスターハウス','ボーナス','偏り'][Lottery([80,7,8,5])];
         this.enemmys = [];
+        this.level = ~~(Math.random()*5)-2 + floor;
+        if(this.level < 0) this.level = 1;
     }
     getChip(x, y) {
         return this.map[y][x];
@@ -384,10 +450,10 @@ class GameMap {
 		var name;
 		for(var i = 0;i < count; i++){
 			name = this.type === '偏り' && name ? name :
-			['豚','牛','鶏','ミミック','虫','蛇','うさぎ','馬','鹿','猪','熊']
-			[Lottery([15,15,15,0.05,2.8,10,12,10,10,10,0.15])];
-			if(true === true){
-				name = '豚';
+			['豚','軍隊豚','牛','鶏','ミミック','虫','蛇','うさぎ','馬','鹿','猪','熊']
+			[Lottery([10,15,15,0.05,2.8,10,12,10,10,10,0.15])];
+			if(!EnemmyData[name]){
+				name = '軍隊豚';
 			}
 			var pos = this.selectBlankChip();
 			var enemmy = new EnemmyData[name](pos.x,pos.y,eventCenter);
@@ -430,11 +496,16 @@ class GameMap {
 			this.getChip(pos.x,pos.y).enemmy = chest;
 			this.enemmys.push(chest);
 		}
+		this.bornStairs();
+    }
+
+    bornStairs(){
+		var pos = this.selectBlankChip();
+		Mapdata.getChip(pos.x,pos.y).isStairs = true;
     }
 
     messageLog(message){
 		//メッセージ
-		
     }
 
     createMenu(arr){}
