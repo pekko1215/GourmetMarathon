@@ -150,6 +150,7 @@ var ItemData = [{
         "name": "ぎゅうにく",
         "type": "use",
         "hp": 20,
+        "dropOnly":true,
         "text": "生の牛肉。腹壊すよ HP10回復 毒付与",
         "rarity": 1,
         "chip": ""
@@ -332,6 +333,7 @@ var ItemData = [{
         "name": "うさぎにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "effect": "毒",
         "text": "生のうさぎ肉。腹壊すよ HP10回復 毒付与",
         "rarity": 1,
@@ -341,6 +343,7 @@ var ItemData = [{
         "name": "ばにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "effect": "毒",
         "text": "生の馬肉。腹壊すよ HP10回復 毒付与",
         "rarity": 2,
@@ -350,6 +353,7 @@ var ItemData = [{
         "name": "しかにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "effect": "毒",
         "text": "生の鹿肉。腹壊すよ HP10回復 毒付与",
         "rarity": 2,
@@ -359,6 +363,7 @@ var ItemData = [{
         "name": "ししにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "effect": "毒",
         "text": "生の猪肉。腹壊すよ HP10回復 毒付与",
         "rarity": 2,
@@ -368,6 +373,7 @@ var ItemData = [{
         "name": "くまにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "effect": "毒",
         "text": "生の熊肉。腹壊すよ HP10回復 毒付与",
         "rarity": 3,
@@ -502,6 +508,7 @@ var ItemData = [{
         "name": "はちのこ",
         "type": "use",
         "hp": 20,
+        "dropOnly":true,
         "text": "蜂の子 好きな人は好き HP20回復",
         "rarity": 1,
         "chip": ""
@@ -510,6 +517,7 @@ var ItemData = [{
         "name": "へびにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "text": "生の蛇肉。腹壊すよ HP10回復 毒付与",
         "rarity": 1,
         "chip": ""
@@ -542,10 +550,27 @@ var ItemData = [{
     {
         "name": "いつかだれかのゆめ",
         "type": "use",
+        "dropOnly":true,
         "text": "夢破れ、ミミックに喰われた人々の思いの結晶 使用フロアにおいて全ステータス2倍 毎ターン10%回復",
         "effect": "使用フロア中全ステータス2倍+10%リジェネ",
         "rarity": 5,
         "chip": ""
-    }
+    },
+    {
+        "name": "にくやきき",
+        "type": "use",
+        "text": "肉を焼く",
+        "effect": "1/3でなまやけ、1/3でこんがり、1/3でこげにくを作成　生肉系アイテム必須",
+        "rarity": 2,
+        "chip": ""
+    },
+    {
+        "name": "なまらすげーにくやきき",
+        "type": "use",
+        "text": "肉を焼く。失敗しない",
+        "effect": "こんがりにくを作成 生肉系アイテム必須",
+        "rarity": 5,
+        "chip": ""
+    },
 
 ]
