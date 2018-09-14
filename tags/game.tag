@@ -46,9 +46,13 @@
 							$e.style.opacity = 0;
 							$e.style.top = `${32 * target.y -32}px`;
 						})
-						Mapdata.messageLog(`${target.name} に ${damage} ダメージ`);
-						if(target.died){
-							Mapdata.messageLog(`${target.name} をたおした`);
+						if(target instanceof Chest){
+							
+						}else{
+							Mapdata.messageLog(`${target.name} に ${damage} ダメージ`);
+							if(target.died){
+								Mapdata.messageLog(`${target.name} をたおした`);
+							}
 						}
 						eventCenter.fire();
 						delayd = true;

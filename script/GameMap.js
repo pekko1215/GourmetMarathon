@@ -6,9 +6,14 @@ class MapChip {
 
 class Item {
 	constructor(obj){
+		Object.assign(this,obj);
 		this.name = obj.name;
 		this.chip = obj.chip;
 		this.text = obj.text;
+	}
+	catch(){
+		Mapdata.messageLog(`${this.name} を手に入れた`);
+		player.items.push(this);
 	}
 }
 
@@ -136,6 +141,7 @@ class Enemmy extends Actor {
 		this.ai();
 
 	}
+	ai(){}
 	damage(point){
 		var damage = this.getDamagePoint(point);
 		this.hp -= damage
@@ -197,34 +203,33 @@ class Dropped extends Actor {
 	}
 }
 
-class Chest extends Actor {
+class Chest extends Enemmy {
 	constructor(x,y,item,rank){
 		super(x,y,eventCenter);
 		this.item = item;
 		this.rank = rank;
 		this.width = 12;
 		this.height = 8;
+		this.hp = 1;
 		this.chip = '/image/chip/chest.png';
 	}
-	open(){
-		if(!this.item) return;
-		item.catch();
-		this.item = null;
+	onDamage(){
+		this.item.catch();
 	}
 	animation(){
 		var left,top;
 		switch(this.rank){
-			case 0:
+			case '木':
 				left = 0;
-				top = 32 * 2;
+				top = -32 * 2;
 			break
-			case 1:
-				left = 32 * 3;
-				top = 32 * 6
+			case '赤':
+				left = -32 * 3;
+				top = -32 * 6
 			break
-			case 2:
-				left = 32 * 6;
-				top = 32 * 6;
+			case '金':
+				left = -32 * 6;
+				top = -32 * 6;
 			break
 		}
 		if(this.item){
@@ -242,9 +247,7 @@ class Chest extends Actor {
 				width:32
 			}
 		}
-
 	}
-
 }
 
 class Player extends Actor {
@@ -366,6 +369,7 @@ class GameMap {
 			this.getChip(pos.x,pos.y).enemmy = enemmy;
 			this.enemmys.push(enemmy);
 		}
+		this.bornChest();
     }
     bornChest(){
 		var count = 0;
@@ -389,15 +393,17 @@ class GameMap {
 		var name;
 		for(var i = 0;i < count; i++){
 			var chestType = ['木','赤','金'][Lottery(chestTypeTable)];
-			var chestLevel = {
+			var chestLevel = Lottery({
 				'木':[70,30, 0, 0, 0],
 				'赤':[10,20,50,20, 0],
 				'金':[ 0, 0,35,60, 5]
-			}
+			}[chestType])+1;
+			var list = ItemData.filter(item=>item.rarity == chestLevel);
+			var item = list[~~(Math.random()*list.length)];
 			var pos = this.selectBlankChip();
-			var chest = new Chest[name](pos.x,pos.y,eventCenter);
-			this.getChip(pos.x,pos.y).enemmy = enemmy;
-			this.enemmys.push(enemmy);
+			var chest = new Chest(pos.x,pos.y,new Item(item),chestType);
+			this.getChip(pos.x,pos.y).enemmy = chest;
+			this.enemmys.push(chest);
 		}
     }
 

@@ -115,6 +115,7 @@ var ItemData = [{
         "name": "ぶたにく",
         "type": "use",
         "hp": 10,
+        "dropOnly":true,
         "effect": "poison",
         "text": "生の豚肉。腹壊すよ HP10回復 毒付与",
         "rarity": 1,
