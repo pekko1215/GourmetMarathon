@@ -229,9 +229,24 @@ var ItemData = [{
     {
         "name": "ばくちストーン",
         "type": "use",
-        "effect": "自分のHPが1/10になるか敵が死ぬか",
+        "effect": "自分のHPが1/10になるか敵が大ダメージ",
         "text": "博打の力を持った石 微笑むのは天使か悪魔か",
         "rarity": 2,
+        "use":function(){
+            if(!rand(2)){
+                var rect = new Rect(player.x-3,player.y-3,7,7);
+                Mapdata.enemmys.filter(e=>rect.included(e.x,e.y)).forEach(enemmy=>{
+                    enemmy.damage(Mapdata.level*Mapdata.level)
+                })
+                this.remove();
+                return 'ばくちストーンをつかった　周りに大ダメージ！'
+            }else{
+                var diff = player.hp - ~~(player.hp*0.1);
+                player.damage(diff);
+                this.remove();
+                return 'ばくちストーンをつかった　自分に大ダメージ！'
+            }
+        },
         "chip": ""
     },
     {
@@ -240,7 +255,20 @@ var ItemData = [{
         "effect": "30ターンの間全ステータス1.5倍",
         "text": "補助の力を持った石 少しの間ステータスを強化する",
         "rarity": 4,
-        "chip": ""
+        "chip": "",
+        "use":function(){
+            player.turnEffect(30,{
+                get atk(){
+                    return player.atk*1.5
+                },
+                get def(){
+                    return player.def*1.5
+                }
+            },this)
+            this.remove();
+            Mapdata.messageLog(`${this.name} を使った`)
+            return `ちからがあふれてくる・・・`
+        }
     },
     {
         "name": "ふっとばステッキ",

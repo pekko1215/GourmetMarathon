@@ -1,4 +1,4 @@
-<game >
+<game>
     <map></map>
     <div id="character" class="player">
         <img src="/image/chip/player.png">
@@ -6,31 +6,67 @@
     <div class="enemmy" each="{e,i in Mapdata.enemmys}" id="enemmy{i}">
         <img src="{e.chip}">
     </div>
-    <div id="messageWindow">
+    <div id="messageWindow" class="window">
     </div>
-    <div id="statusWindow">
+    <div id="statusWindow" class="window">
         第<span id="floor">{floor}</span>階 HP:
         <span id="hp" class="{player.hp/player.maxhp<=0.2?player.hp/player.maxhp<=0.1?'danger':'pinch':''}">{~~player.hp}/{~~player.maxhp}</span>
         <span id="info">{player.debuff||''}</span>
     </div>
-    <div id="menuWindow" if="{menu}">
+    <div id="menuWindow" if="{menu}" class="window">
         <div each="{m in menu}" class="menu {m.checked?'checked':''}">{m.text}</div>
     </div>
-    <div id="infoWindow" if="{infoText}">
+    <div id="infoWindow" if="{infoText}" class="window">
         <div id="infoText">{infoText}</div>
     </div>
+    <div id="titleWindow" if="{displayTitle}">
+        <div id="obi">
+            <div id="title">第{this.floor}階 危険度 {("★".repeat(Mapdata.level - this.floor + 3)+"☆☆☆☆").slice(0,5)}</div>
+        </div>
+    </div>
+    <div if="{getDevice !== 'other'}" id="smartKey">
+		<div class="key-wrap">
+			<div id="topButton" data-action="ArrowUp">
+				<img src="/image/ui_arrow.png">
+			</div>
+		</div>
+		<div class="key-wrap">
+			<div id="leftButton" data-action="ArrowLeft">
+				<img src="/image/ui_arrow.png">
+			</div>
+			<div id="atackButton" data-action="Space">
+				<img src="/image/ui_action.png">
+			</div>
+			<div id="rightButton" data-action="ArrowRight">
+				<img src="/image/ui_arrow.png">
+			</div>
+		</div>
+		<div class="key-wrap">
+			<div id="dummyButton">
+				<img src="/image/ui_arrow.png">
+			</div>
+			<div id="bottomButton" ontouchstart="{smartButton}" data-action="ArrowDown">
+				<img src="/image/ui_arrow.png">
+			</div>
+			<div id="menuButton" data-action="KeyV">
+				<img src="/image/ui_menu.png">
+			</div>
+		</div>
+    </div>
     <script>
-	window.MetaInfo = {};
-    window.newGame = (floor=1,oldPlayer) => {
-		this.floor = floor;
+    window.MetaInfo = {};
+    const frameTime = 50;
+    window.newGame = (floor = 1, oldPlayer) => {
+        this.floor = floor;
         window.scrollTo(0, 0);
-        window.Mapdata = new GameMap(AutoGenerator(),floor);
+        window.Mapdata = new GameMap(AutoGenerator(), floor);
+		this.displayTitle = true;
         window.eventCenter = new EventCenter;
         var pos = Mapdata.selectBlankChip()
-        window.player = new Player(pos.x, pos.y, eventCenter,oldPlayer);
+        window.player = new Player(pos.x, pos.y, eventCenter, oldPlayer);
         var delayd = false;
-        if(window.keyEvent){
-			window.removeEventListener('keydown',window.keyEvent)
+        if (window.keyEvent) {
+            window.removeEventListener('keydown', window.keyEvent)
         }
         window.addEventListener('keydown', window.keyEvent = (e) => {
             if (delayd) return;
@@ -80,7 +116,7 @@
                             }, 500)
                             setTimeout(() => {
                                 delayd = false;
-                            }, 100)
+                            }, frameTime)
                             break
                     }
                     break
@@ -123,7 +159,7 @@
                             delayd = true;
                             setTimeout(() => {
                                 delayd = false;
-                            }, 100)
+                            }, frameTime)
                         }
                     }
                     break
@@ -202,6 +238,7 @@
             }
         })
         eventCenter.on(() => {
+			window.scrollTo(0,0)
             this.root.style.left = `calc(${-16 - 32 * player.x}px + 50vw)`
             this.root.style.top = `calc(${-16 - 32 * player.y}px + 50vh)`
             Mapdata.enemmys.forEach((enemmy, i) => {
@@ -258,17 +295,18 @@
             Mapdata.messageLog(`${point} ダメージを受けた`);
             delayd = true;
             setTimeout(() => {
+				delayd = false;
                 $e.parentNode.removeChild($e)
             }, 500)
         }
         var idx = 0;
-        var playerAnimationTimer = 
-        setInterval(() => {
-            var $p = this.root.querySelector('.player > img');
-            $p.style.left = `${-Math.abs(2-idx)*32}px`;
-            idx++;
-            idx = idx < 4 ? idx : 0;
-        }, 200);
+        var playerAnimationTimer =
+            setInterval(() => {
+                var $p = this.root.querySelector('.player > img');
+                $p.style.left = `${-Math.abs(2-idx)*32}px`;
+                idx++;
+                idx = idx < 4 ? idx : 0;
+            }, 200);
         Mapdata.createMenu = (menu) => {
             menu[0].checked = true;
             this.menu = menu;
@@ -277,19 +315,48 @@
             }
             this.update();
         }
-        Mapdata.nextFloor = () =>{
-			delete player.x;
-			delete player.y;
-			clearInterval(playerAnimationTimer);
-			newGame(floor+1,player);
+        Mapdata.nextFloor = () => {
+            delete player.x;
+            delete player.y;
+            clearInterval(playerAnimationTimer);
+            newGame(floor + 1, player);
         }
-        this.one("updated",()=>{
-			eventCenter.fire();
-        })
+        Mapdata.gameOver = ()=>{
+			Mapdata.gameOver = ()=>{};
+			window.removeEventListener('keydown', window.keyEvent);
+			this.root.style.opacity = 0;
+			setTimeout(()=>{
+				alert(`ゲームオーバー！\n最終階層:${floor}階 Lv:${player.level}`);
+				location.reload();
+			},3000)
+        }
+        this.one("updated", () => {
+			setTimeout(()=>{
+				setTimeout(()=>{
+					this.root.querySelector('#titleWindow').style.opacity = 0;
+				})
+	            eventCenter.fire();
+				setTimeout(()=>{
+					this.displayTitle = false;
+					this.update()
+				},1000)
+			},2000)
+        });
         this.update();
     }
-    this.one("mount",()=>{
-		newGame();
+    this.one("mount", () => {
+        newGame();
+        [...this.root.querySelectorAll('#smartKey > div')].forEach(e=>{
+			e.addEventListener('touchstart',(e)=>{
+		        var src = e.target;
+		        if(src.nodeName === 'IMG') src = src.parentNode;
+		        var action = src.dataset.action;
+		        if (action) {
+		            window.keyEvent({ code: action });
+			    }
+			    e.preventDefault();
+			})
+		})
     })
     </script>
     <style scoped>
@@ -371,7 +438,7 @@
         height: 30%;
         width: 40%;
         background: rgba(209, 255, 210, 0.7);
-        font-size: 25px;
+        font-size: 3vw;
         border: solid 2px;
         padding: 4px;
         border-radius: 3%;
@@ -380,16 +447,18 @@
     .message {
         transition: max-height 0.1s linear;
         margin-top: 2%;
-        max-height: 25px;
-        overflow: hidden;
+        max-height: 20px;
+        /*overflow: hidden;*/
     }
 
      :scope {
         position: absolute;
         left: -2.5vw;
         top: -7.5vw;
-        transition: top 0.1s linear, left 0.1s linear;
+        opacity:1;
+        transition: top 0.1s linear, left 0.1s linear,opacity 2s;
         font-family: PixelMplus;
+        overflow:hidden;
     }
 
     #statusWindow {
@@ -444,6 +513,88 @@
         font-size: 25px;
         border: solid 2px;
         padding: 4px;
+    }
+
+    .window {
+        z-index: 5;
+    }
+
+    #titleWindow {
+        background: black;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        opacity:1;
+        transition: opacity 1s ease-in;
+    }
+
+    #obi {
+        width: 100%;
+        height: 30%;
+        top: 0;
+        bottom: 0;
+        position: absolute;
+        margin: auto;
+        background: #009688;
+    }
+
+    #title {
+        text-align: center;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        height: fit-content;
+        width: 100%;
+        font-size: 5vh;
+        color: white;
+    }
+    #smartKey {
+		width:40vw;
+		height:40vw;
+		position:fixed;
+		top:10vh;
+		right:1%;
+		opacity:0.2;
+		cursor:pointer;
+    }
+    .key-wrap {
+		height:33%;
+		text-align:center;
+		display:flex;
+		justify-content: space-between;
+    }
+
+    .key-wrap > div {
+		flex-grow:1;
+    }
+
+    #topButton ,#bottomButton{
+    }
+    #leftButton ,#menuButton,#rightButton{
+    }
+
+    .key-wrap > div > img {
+		height:100%;
+    }
+
+    #dummyButton > img{
+		opacity:0;
+    }
+
+    #topButton > img {
+    }
+    #leftButton > img{
+		transform:rotate(-90deg);
+    }
+    #rightButton > img {
+		transform:rotate(90deg);
+    }
+    #bottomButton > img {
+		transform:rotate(180deg);
     }
     </style>
 </game>

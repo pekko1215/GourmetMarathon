@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<title>グルメマラソン</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>グルメマラソン</title>
+    <style>
+    html,
+    body {
+        height: 100%;
+        width: 100%;
+        overflow: hidden
+    }
+    </style>
 </head>
-<body style="margin:0;overflow: hidden;">
-	<game></game>
-	<script type="riot/tag" src="/tags/game.tag"></script>
-	<script type="riot/tag" src="/tags/map.tag"></script>
+
+<body style="margin:0;overflow: hidden;background:gray;">
+    <game></game>
+    <script type="riot/tag" src="/tags/game.tag"></script>
+    <script type="riot/tag" src="/tags/map.tag"></script>
     <script src="https://cdn.jsdelivr.net/npm/riot@3.12/riot+compiler.min.js"></script>
     <script src="/script/utils.js"></script>
     <script src="/script/AutoMapGenerator.js"></script>
@@ -16,7 +26,26 @@
     <script src="/metadata/item.js"></script>
     <script src="/metadata/enemmy.js"></script>
     <script>
-		riot.mount('*')
-	</script>
+     document.addEventListener('touchmove', event => {
+         event.preventDefault();
+     }, { passive: false });
+    document.addEventListener('touchstart', (e) => {
+        if (e.touches.length >= 2) {
+            e.preventDefault();
+            return
+        }
+    }, { passive: false });
+    var t = 0;
+    document.addEventListener('touchend', function(e) {
+        var now = new Date().getTime();
+        if ((now - t) < 350) {
+            e.preventDefault();
+        }
+        t = now;
+    })
+    // console.error = (r) => alert(r);
+    riot.mount('*');
+    </script>
 </body>
+
 </html>

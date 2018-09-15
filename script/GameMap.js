@@ -27,6 +27,11 @@ class Item {
 	use(){
 		return 'このアイテムは使用することはできない'
 	}
+	remove(){
+        var idx = player.items.findIndex(item=>item.name == this.name);
+        player.items.splice(idx,1);
+        eventCenter.fire();
+	}
 }
 
 class Food extends Item {
@@ -40,9 +45,7 @@ class Food extends Item {
 			point = player.maxhp - player.hp;
 		}
 		player.hp += point;
-		var idx = player.items.findIndex(item=>item.name == this.name);
-		player.items.splice(idx,1);
-		eventCenter.fire();
+		this.remove();
 		return `HPが ${point} 回復した`;
 	}
 }
@@ -112,7 +115,8 @@ class Actor {
 		var down = y > 0 ? y : 0;
 		var right = x > 0 ? x : 0;
 		var left = x < 0 ? -x : 0;
-		return ['↑','↓','→','←'][[up,down,right,left].findIndex(d=>d)];
+		var arr = [up,down,right,left];
+		return ['↑','↓','→','←'][arr.indexOf(Math.max(...arr))];
     }
     getTarget(direction = this.direction){
 		var d = {
@@ -176,6 +180,7 @@ class Enemmy extends Actor {
 	}
 	ai(){}
 	damage(point){
+		if(this.died)return
 		var damage = this.getDamagePoint(point);
 		this.hp -= damage
 		if(this.hp <= 0){
@@ -303,6 +308,7 @@ class Player extends Actor {
         this.items = [];
         this.equipmentSlot = 2;
         this.equipments = [];
+        this.turnEffects = [];
         Object.assign(this,old)
     }
     action(){
@@ -342,7 +348,8 @@ class Player extends Actor {
 
     getDamagePoint(point){
 		var p = this.equipments.filter(d=>d).reduce((a,b)=>a+(b.def||0),0) + this.def;
-		return Math.ceil(point*Math.pow(0.99,p));
+		var e = this.turnEffects.reduce((a,b)=>(b.def||0),0);
+		return Math.ceil(point*Math.pow(0.99,p+e));
     }
 
     getExp(exp){
@@ -393,7 +400,25 @@ class Player extends Actor {
     }
 	getAttackPoint(){
 		var p = this.equipments.filter(d=>d).reduce((a,b)=>a+(b.atk||0),0);
-		return ~~(this.atk * Math.pow(1.01,p) * (0.8 + Math.random()*0.4));
+		var e = this.turnEffects.reduce((a,b)=>(b.atk||0),0);
+		return ~~((this.atk+e) * Math.pow(1.01,p) * (0.8 + Math.random()*0.4));
+    }
+    turnEffect(turn,effect,item){
+		this.turnEffects.push(effect);
+		var floor = Mapdata.floor;
+		var fn;
+		eventCenter.once(fn = ()=>{
+			if(!turn){
+				var idx = this.turnEffects.findIndex(e=>e == effect);
+				this.turnEffects.splice(idx,1);
+				Mapdata.messageLog(`${item.name} の効果がきれた`)
+				return;
+			}
+			turn--;
+			setTimeout(()=>{
+				eventCenter.once(fn)
+			})
+		})
     }
 }
 
@@ -408,8 +433,9 @@ class GameMap {
         this.height = this.map.length;
         this.type = ['通常','モンスターハウス','ボーナス','偏り'][Lottery([80,7,8,5])];
         this.enemmys = [];
+        this.floor = floor;
         this.level = ~~(Math.random()*5)-2 + floor;
-        if(this.level < 0) this.level = 1;
+        if(this.level <= 0) this.level = 1;
     }
     getChip(x, y) {
         return this.map[y][x];
@@ -450,8 +476,8 @@ class GameMap {
 		var name;
 		for(var i = 0;i < count; i++){
 			name = this.type === '偏り' && name ? name :
-			['豚','軍隊豚','牛','鶏','ミミック','虫','蛇','うさぎ','馬','鹿','猪','熊']
-			[Lottery([10,15,15,0.05,2.8,10,12,10,10,10,0.15])];
+			['豚','軍隊豚','牛','カラス','ミミック','虫','蛇','うさぎ','馬','鹿','猪','熊']
+			[Lottery([10,15,7,8,2.8,10,12,10,10,10,0.15])];
 			if(!EnemmyData[name]){
 				name = '軍隊豚';
 			}
@@ -467,19 +493,19 @@ class GameMap {
 		var chestTypeTable;
 		switch(this.type){
 			case '通常':
-				count = 12 + rand(5);
-				chestTypeTable = [94,5,1];
+				count = 4 + rand(5);
+				chestTypeTable = [94,5.9,0.1];
 			case '偏り':
-				count = 12 + rand(5);
-				chestTypeTable = [70,25,5];
+				count = 4 + rand(5);
+				chestTypeTable = [80,19.5,0.5];
 				break
 			case 'モンスターハウス':
-				count = 15 + rand(6);
-				chestTypeTable = [90,8,2];
+				count = 10 + rand(6);
+				chestTypeTable = [90,9,1];
 				break
 			case 'ボーナス':
-				count = 24 + rand(7);
-				chestTypeTable = [94,5,1];
+				count = 12 + rand(7);
+				chestTypeTable = [94,5.5,0.5];
 		}
 		var name;
 		for(var i = 0;i < count; i++){
@@ -487,7 +513,7 @@ class GameMap {
 			var chestLevel = Lottery({
 				'木':[70,30, 0, 0, 0],
 				'赤':[10,20,50,20, 0],
-				'金':[ 0, 0,35,60, 5]
+				'金':[ 0, 0,35,64, 1]
 			}[chestType])+1;
 			var list = ItemData.filter(item=>item.rarity == chestLevel).filter(data=>!data.dropOnly);
 			var item = list[~~(Math.random()*list.length)];
