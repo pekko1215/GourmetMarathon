@@ -1,7 +1,7 @@
 <game>
     <map></map>
     <div id="character" class="player">
-        <img src="/image/chip/player.png">
+        <img src="./image/chip/player.png">
     </div>
     <div class="enemmy" each="{e,i in Mapdata.enemmys}" id="enemmy{i}">
         <img src="{e.chip}">
@@ -27,29 +27,29 @@
     <div if="{getDevice !== 'other'}" id="smartKey">
 		<div class="key-wrap">
 			<div id="topButton" data-action="ArrowUp">
-				<img src="/image/ui_arrow.png">
+				<img src="./image/ui_arrow.png">
 			</div>
 		</div>
 		<div class="key-wrap">
 			<div id="leftButton" data-action="ArrowLeft">
-				<img src="/image/ui_arrow.png">
+				<img src="./image/ui_arrow.png">
 			</div>
 			<div id="atackButton" data-action="Space">
-				<img src="/image/ui_action.png">
+				<img src="./image/ui_action.png">
 			</div>
 			<div id="rightButton" data-action="ArrowRight">
-				<img src="/image/ui_arrow.png">
+				<img src="./image/ui_arrow.png">
 			</div>
 		</div>
 		<div class="key-wrap">
 			<div id="dummyButton">
-				<img src="/image/ui_arrow.png">
+				<img src="./image/ui_arrow.png">
 			</div>
 			<div id="bottomButton" ontouchstart="{smartButton}" data-action="ArrowDown">
-				<img src="/image/ui_arrow.png">
+				<img src="./image/ui_arrow.png">
 			</div>
 			<div id="menuButton" data-action="KeyV">
-				<img src="/image/ui_menu.png">
+				<img src="./image/ui_menu.png">
 			</div>
 		</div>
     </div>
@@ -362,7 +362,7 @@
     <style scoped>
     @font-face {
         font-family: PixelMplus;
-        src: url(/font/PixelMplus10-Regular.ttf);
+        src: url(./font/PixelMplus10-Regular.ttf);
     }
 
     .player {
