@@ -255,7 +255,7 @@ class Chest extends Enemmy {
 		this.width = 12;
 		this.height = 8;
 		this.hp = 0;
-		this.chip = '/image/chip/chest.png';
+		this.chip = './image/chip/chest.png';
 	}
 	onDamage(){
 		this.item.catch();

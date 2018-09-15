@@ -5,7 +5,7 @@ EnemmyData.豚 = class extends Enemmy {
 		this.hp = Mapdata.level*1.4;
 		this.exp = Mapdata.level + 1;
 		this.frame = 0;
-		this.chip = 'image/chip/pig.png';
+		this.chip = './image/chip/pig.png';
 		this.width = 6;
 		this.height = 4;
 		this.name = "あばれブタ"
@@ -120,7 +120,7 @@ EnemmyData.カラス = class extends EnemmyData.豚 {
 		this.exp = ~~(Mapdata.level*1.8);
 		this.name = "カラス"
 		this.mode = null;
-		this.chip = 'image/chip/crow.png';
+		this.chip = './image/chip/crow.png';
 	}
 	ai(){
 		if(this.mode){

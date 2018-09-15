@@ -1,7 +1,7 @@
 <map>
 	<div class="line" each="{arr,y in Mapdata.map}">
 		<span each="{chip,x in arr}" class="chip {chip.type}">
-			<img if="{chip.isStairs}" src="/image/chip/stairs.png">
+			<img if="{chip.isStairs}" src="./image/chip/stairs.png">
 		</span>
 	</div>
 	<script>
