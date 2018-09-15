@@ -165,9 +165,7 @@
                     break
                 case 'menu':
                     if (this.menu) {
-                        this.menu = null;
-                        this.infoText = null
-                        this.update();
+						Mapdata.closeMenu();
                         return;
                     }
                     var itemMenu;
@@ -189,8 +187,10 @@
                                             text: 'つかう',
                                             fn: () => {
                                                 var mes = item.use();
-                                                itemMenu();
-                                                Mapdata.messageLog(mes)
+                                                if(mes){
+													itemMenu();
+													Mapdata.messageLog(mes)
+												}
                                             }
                                         }, {
                                             text: 'すてる',
@@ -307,13 +307,20 @@
                 idx++;
                 idx = idx < 4 ? idx : 0;
             }, 200);
-        Mapdata.createMenu = (menu) => {
+        Mapdata.createMenu = (menu,mes) => {
             menu[0].checked = true;
             this.menu = menu;
             if (this.menu[0].check) {
                 this.menu[0].check();
             }
+            if(mes) this.infoText = mes;
             this.update();
+        }
+        Mapdata.closeMenu = () =>{
+            this.menu = null;
+            this.infoText = null
+            this.update();
+            return;
         }
         Mapdata.nextFloor = () => {
             delete player.x;

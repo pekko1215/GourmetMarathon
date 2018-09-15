@@ -375,7 +375,7 @@ class Player extends Actor {
 
 		setTimeout(()=>{
 			if(~~this.atk != oldatk){
-				Mapdata.messageLog(`HP ${oldatk}→${~~this.atk} (+${~~this.atk-oldatk})`);
+				Mapdata.messageLog(`atk ${oldatk}→${~~this.atk} (+${~~this.atk-oldatk})`);
 			}
 			if(~~this.def != olddef){
 				Mapdata.messageLog(`def ${olddef}→${~~this.def} (+${~~this.def-olddef})`);

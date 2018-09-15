@@ -192,7 +192,25 @@ var ItemData = [{
         "effect": "3回回避",
         "text": "幸運の象徴。使えばいいことある…かも？",
         "rarity": 4,
-        "chip": ""
+        "chip": "",
+        "use":function(){
+            //攻撃力が上昇、守備力が上昇、経験値獲得、次フロアに移動のうち、１つが発生
+            this.remove();
+            return [()=>{
+                player.atk += player.atk*0.05;
+                return `atkがちょっぴり上がった`
+            },()=>{
+                player.def += player.def*0.05;
+                return `defがちょっぴり上がった`
+            },()=>{
+                var exp = ~~(player.nextExp * 0.25)
+                player.getExp(exp);
+                return `${exp}の経験値を手に入れた`
+            },()=>{
+                Mapdata.nextFloor();
+                return `次の階層へワープした`
+            }][rand(4)]();
+        }
     },
     {
         "name": "テレポストーン",
@@ -200,7 +218,12 @@ var ItemData = [{
         "effect": "次エリア前に移動",
         "text": "移動の力を持った石 次への道となる",
         "rarity": 3,
-        "chip": ""
+        "chip": "",
+        "use":function(){
+            Mapdata.nextFloor();
+            this.remove();
+            return `次の階層へワープした`
+        }
     },
     {
         "name": "みなごろストーン",
@@ -208,6 +231,7 @@ var ItemData = [{
         "effect": "同じエリアの敵を全滅させる",
         "text": "即死の力を持った石 尽くを薙ぎ払う",
         "rarity": 5,
+        "dropOnly":true,
         "chip": ""
     },
     {
@@ -215,6 +239,7 @@ var ItemData = [{
         "type": "use",
         "effect": "全回復",
         "text": "治癒の力を持った石 全てを癒す",
+        "hp":100,
         "rarity": 4,
         "chip": ""
     },
@@ -252,17 +277,17 @@ var ItemData = [{
     {
         "name": "バフストーン",
         "type": "use",
-        "effect": "30ターンの間全ステータス1.5倍",
+        "effect": "30ターンの間全ステータス1.2倍",
         "text": "補助の力を持った石 少しの間ステータスを強化する",
         "rarity": 4,
         "chip": "",
         "use":function(){
             player.turnEffect(30,{
                 get atk(){
-                    return player.atk*1.5
+                    return player.atk*0.2
                 },
                 get def(){
-                    return player.def*1.5
+                    return player.def*0.2
                 }
             },this)
             this.remove();
@@ -614,7 +639,33 @@ var ItemData = [{
         "text": "肉を焼く",
         "effect": "1/3でなまやけ、1/3でこんがり、1/3でこげにくを作成　生肉系アイテム必須",
         "rarity": 2,
-        "chip": ""
+        "chip": "",
+        "use":function(){
+            var list = player.items.filter(item=>{
+                if(/(こげ|なまやけ|こんがり|にくやきき)/.test(item.name)) return false;
+                if(!/にく/.test(item.name)) return;
+                return true;
+            })
+            if(list.length){
+
+                Mapdata.createMenu(list.map(item=>{
+                    return {
+                        text:item.name,
+                        fn:()=>{
+                            item.remove();
+                            var newName = ['こげ','こんがり','なまやけ'][rand(3)]+item.name;
+                            var niku = new Item(ItemData.smartFilter(newName,'name')[0]);
+                            niku.catch();
+                            Mapdata.closeMenu();
+                            eventCenter.fire();
+                        }
+                    }
+                }),'にくをえらんでね')
+                return
+            }else{
+                return `にくがありません`
+            }
+        }
     },
     {
         "name": "なまらすげーにくやきき",
