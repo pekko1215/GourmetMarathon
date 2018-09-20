@@ -4,6 +4,15 @@ var ItemData = [{
         "hp": 5,
         "chip": "",
         "rarity": 1,
+        "use":function(){
+            var point = 5;
+            if (player.hp + point >= player.maxhp) {
+                point = player.maxhp-player.hp
+            }
+            player.hp += point;
+            this.remove();
+            return `HPが${point}回復した`;
+        },
         "text": "甘くて美味しい。5回復"
     },
     {
@@ -11,6 +20,15 @@ var ItemData = [{
         "type": "use",
         "hp": 10,
         "rarity": 2,
+        "use":function(){
+            var point = 10;
+            if (player.hp + point >= player.maxhp) {
+                point = player.maxhp-player.hp
+            }
+            player.hp += point;
+            this.remove();
+            return `HPが${point}回復した`;
+        },
         "chip": "",
         "text": "しゃくしゃくとした食感がよい。10回復"
     },
@@ -20,6 +38,15 @@ var ItemData = [{
         "hp": 20,
         "chip": "",
         "rarity": 2,
+        "use":function(){
+            var point = 20;
+            if (player.hp + point >= player.maxhp) {
+                point = player.maxhp-player.hp
+            }
+            player.hp += point;
+            this.remove();
+            return `HPが${point}回復した`;
+        },
         "text": "皮ごと食べれる。甘い。20回復"
     },
     {
@@ -28,6 +55,15 @@ var ItemData = [{
         "hp": 50,
         "chip": "",
         "rarity": 3,
+        "use":function(){
+            var point = 50;
+            if (player.hp + point >= player.maxhp) {
+                point = player.maxhp-player.hp
+            }
+            player.hp += point;
+            this.remove();
+            return `HPが${point}回復した`;
+        },
         "text": "これが高級品の力だ。50回復"
     },
     {
@@ -35,6 +71,15 @@ var ItemData = [{
         "type": "use",
         "hp": 12,
         "text": "何の変哲もないきのこ。12回復",
+        "use":function(){
+            var point = 12;
+            if (player.hp + point >= player.maxhp) {
+                point = player.maxhp-player.hp
+            }
+            player.hp += point;
+            this.remove();
+            return `HPが${point}回復した`;
+        },
         "rarity": 2,
         "chip": ""
     },
@@ -51,6 +96,9 @@ var ItemData = [{
         "name": "よわいつめ",
         "type": "eq",
         "atk": 6,
+        "use":function(){
+            player.atk += 6;
+        },
         "text": "貧弱なつめ、素手よりまし…かも？ atk+6",
         "rarity": 1,
         "chip": ""
@@ -59,6 +107,9 @@ var ItemData = [{
         "name": "ふつうのつめ",
         "type": "eq",
         "atk": 14,
+        "use":function(){
+            player.atk += 14;
+        },
         "text": "一般的なつめ、戦いにはなる atk+14",
         "rarity": 2,
         "chip": ""
@@ -67,6 +118,9 @@ var ItemData = [{
         "name": "つよいつめ",
         "type": "eq",
         "atk": 32,
+        "use":function(){
+            player.atk += 32;
+        },
         "text": "強靭なつめ、大抵の雑魚には勝てる atk+32",
         "rarity": 3,
         "chip": ""
@@ -75,6 +129,9 @@ var ItemData = [{
         "name": "でんせつのつめ",
         "type": "eq",
         "atk": 99,
+        "use":function(){
+            player.atk += 99;
+        },
         "text": "まさにでんせつ。ちょうつおい atk+99",
         "rarity": 5,
         "chip": ""
@@ -83,6 +140,9 @@ var ItemData = [{
         "name": "ぼろいマント",
         "type": "eq",
         "def": 5,
+        "use":function(){
+            player.def += 5;
+        },
         "text": "もはや布切れ、防具？はぁ？ def+5",
         "rarity": 1,
         "chip": ""
@@ -91,6 +151,9 @@ var ItemData = [{
         "name": "ふつうのマント",
         "type": "eq",
         "def": 14,
+        "use":function(){
+            player.def += 14;
+        },
         "text": "マント。少しは守ってくれそう def+14",
         "rarity": 2,
         "chip": ""
@@ -99,6 +162,9 @@ var ItemData = [{
         "name": "きれいなマント",
         "type": "eq",
         "def": 36,
+        "use":function(){
+            player.def += 36;
+        },
         "text": "防刃性能ばっちり、衝撃にも強い高級品 def+32",
         "rarity": 3,
         "chip": ""
@@ -107,6 +173,9 @@ var ItemData = [{
         "name": "でんせつのマント",
         "type": "eq",
         "def": 99,
+        "use":function(){
+            player.def += 99;
+        },
         "text": "勇者が着てたとかなんとか、ふしぎな力で守られている def+99",
         "rarity": 5,
         "chip": ""
@@ -323,6 +392,9 @@ var ItemData = [{
         "name": "木の剣",
         "type": "eq",
         "atk": 3,
+        "use":function(){
+            player.atk += 3;
+        },
         "text": "ただの木剣 殴ると痛い atk+3",
         "rarity": 1,
         "chip": ""
@@ -331,6 +403,9 @@ var ItemData = [{
         "name": "鉄の剣",
         "type": "eq",
         "atk": 26,
+        "use":function(){
+            player.atk += 26;
+        },
         "text": "鍛えられた鉄の剣 そこそこの切れ味 atk+26",
         "rarity": 2,
         "chip": ""
@@ -339,6 +414,9 @@ var ItemData = [{
         "name": "ダイヤの剣",
         "type": "eq",
         "atk": 43,
+        "use":function(){
+            player.atk += 43;
+        },
         "text": "めっちゃ固いダイヤの剣 切れ味ばつぐん atk+43",
         "rarity": 4,
         "chip": ""
@@ -347,6 +425,9 @@ var ItemData = [{
         "name": "えくすかりばー",
         "type": "eq",
         "atk": 78,
+        "use":function(){
+            player.atk += 78;
+        },
         "text": "でんせつの剣 ビームが出る atk+78",
         "rarity": 5,
         "effect": "直線方向にいる敵全体に攻撃可能",
