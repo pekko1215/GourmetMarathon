@@ -440,7 +440,8 @@ var ItemData = [{
         "text": "ただの木の槍 ちょい範囲が広い atk+2",
         "rarity": 1,
         "effect": "2マス攻撃",
-        "chip": ""
+        "chip": "",
+        "attackSize":[[1],[1],[2]]
     },
     {
         "name": "鉄の槍",

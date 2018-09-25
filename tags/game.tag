@@ -25,33 +25,33 @@
         </div>
     </div>
     <div if="{getDevice !== 'other'}" id="smartKey">
-		<div class="key-wrap">
-			<div id="topButton" data-action="ArrowUp">
-				<img src="./image/ui_arrow.png">
-			</div>
-		</div>
-		<div class="key-wrap">
-			<div id="leftButton" data-action="ArrowLeft">
-				<img src="./image/ui_arrow.png">
-			</div>
-			<div id="atackButton" data-action="Space">
-				<img src="./image/ui_action.png">
-			</div>
-			<div id="rightButton" data-action="ArrowRight">
-				<img src="./image/ui_arrow.png">
-			</div>
-		</div>
-		<div class="key-wrap">
-			<div id="dummyButton">
-				<img src="./image/ui_arrow.png">
-			</div>
-			<div id="bottomButton" ontouchstart="{smartButton}" data-action="ArrowDown">
-				<img src="./image/ui_arrow.png">
-			</div>
-			<div id="menuButton" data-action="KeyV">
-				<img src="./image/ui_menu.png">
-			</div>
-		</div>
+        <div class="key-wrap">
+            <div id="topButton" data-action="ArrowUp">
+                <img src="./image/ui_arrow.png">
+            </div>
+        </div>
+        <div class="key-wrap">
+            <div id="leftButton" data-action="ArrowLeft">
+                <img src="./image/ui_arrow.png">
+            </div>
+            <div id="atackButton" data-action="Space">
+                <img src="./image/ui_action.png">
+            </div>
+            <div id="rightButton" data-action="ArrowRight">
+                <img src="./image/ui_arrow.png">
+            </div>
+        </div>
+        <div class="key-wrap">
+            <div id="dummyButton">
+                <img src="./image/ui_arrow.png">
+            </div>
+            <div id="bottomButton" ontouchstart="{smartButton}" data-action="ArrowDown">
+                <img src="./image/ui_arrow.png">
+            </div>
+            <div id="menuButton" data-action="KeyV">
+                <img src="./image/ui_menu.png">
+            </div>
+        </div>
     </div>
     <script>
     window.MetaInfo = {};
@@ -60,7 +60,7 @@
         this.floor = floor;
         window.scrollTo(0, 0);
         window.Mapdata = new GameMap(AutoGenerator(), floor);
-		this.displayTitle = true;
+        this.displayTitle = true;
         window.eventCenter = new EventCenter;
         var pos = Mapdata.selectBlankChip()
         window.player = new Player(pos.x, pos.y, eventCenter, oldPlayer);
@@ -83,6 +83,7 @@
                     if (this.menu) { this.menu.find(m => m.checked).fn(); return }
                     var ret = player.action();
                     if (!ret) return;
+                    // console.log(ret)
                     switch (true) {
                         case ret.type === 'catch':
                             //入手
@@ -90,30 +91,11 @@
                             break
                         case ret.type === 'atack':
                             //攻撃
-                            var { damage, target } = ret;
-                            var $e = document.createElement('div');
-                            $e.innerText = damage;
-                            $e.classList.add('damage')
-                            $e.style.left = `${32 * target.x}px`;
-                            $e.style.top = `${32 * target.y}px`;
-                            this.root.appendChild($e);
-                            setTimeout(() => {
-                                $e.style.opacity = 0;
-                                $e.style.top = `${32 * target.y -32}px`;
+                            (ret.list || []).forEach(ret => {
+                                Mapdata.popEnemmyDamage(ret);
                             })
-                            if (target instanceof Chest) {
-
-                            } else {
-                                Mapdata.messageLog(`${target.name} に ${damage} ダメージ`);
-                                if (target.died) {
-                                    Mapdata.messageLog(`${target.name} をたおした (Exp ${target.exp})`);
-                                }
-                            }
-                            eventCenter.fire();
+                            ret.list.length&&eventCenter.fire();
                             delayd = true;
-                            setTimeout(() => {
-                                $e.parentNode.removeChild($e)
-                            }, 500)
                             setTimeout(() => {
                                 delayd = false;
                             }, frameTime)
@@ -165,7 +147,7 @@
                     break
                 case 'menu':
                     if (this.menu) {
-						Mapdata.closeMenu();
+                        Mapdata.closeMenu();
                         return;
                     }
                     var itemMenu;
@@ -187,10 +169,10 @@
                                             text: 'つかう',
                                             fn: () => {
                                                 var mes = item.use();
-                                                if(mes){
-													itemMenu();
-													Mapdata.messageLog(mes)
-												}
+                                                if (mes) {
+                                                    itemMenu();
+                                                    Mapdata.messageLog(mes)
+                                                }
                                             }
                                         }, {
                                             text: 'すてる',
@@ -238,7 +220,7 @@
             }
         })
         eventCenter.on(() => {
-			window.scrollTo(0,0)
+            window.scrollTo(0, 0)
             this.root.style.left = `calc(${-16 - 32 * player.x}px + 50vw)`
             this.root.style.top = `calc(${-16 - 32 * player.y}px + 50vh)`
             Mapdata.enemmys.forEach((enemmy, i) => {
@@ -295,7 +277,7 @@
             Mapdata.messageLog(`${point} ダメージを受けた`);
             delayd = true;
             setTimeout(() => {
-				delayd = false;
+                delayd = false;
                 $e.parentNode.removeChild($e)
             }, 500)
         }
@@ -307,16 +289,16 @@
                 idx++;
                 idx = idx < 4 ? idx : 0;
             }, 200);
-        Mapdata.createMenu = (menu,mes) => {
+        Mapdata.createMenu = (menu, mes) => {
             menu[0].checked = true;
             this.menu = menu;
             if (this.menu[0].check) {
                 this.menu[0].check();
             }
-            if(mes) this.infoText = mes;
+            if (mes) this.infoText = mes;
             this.update();
         }
-        Mapdata.closeMenu = () =>{
+        Mapdata.closeMenu = () => {
             this.menu = null;
             this.infoText = null
             this.update();
@@ -328,42 +310,66 @@
             clearInterval(playerAnimationTimer);
             newGame(floor + 1, player);
         }
-        Mapdata.gameOver = ()=>{
-			Mapdata.gameOver = ()=>{};
-			window.removeEventListener('keydown', window.keyEvent);
-			this.root.style.opacity = 0;
-			setTimeout(()=>{
-				alert(`ゲームオーバー！\n最終階層:${floor}階 Lv:${player.level}`);
-				location.reload();
-			},3000)
+        Mapdata.gameOver = () => {
+            Mapdata.gameOver = () => {};
+            window.removeEventListener('keydown', window.keyEvent);
+            this.root.style.opacity = 0;
+            setTimeout(() => {
+                alert(`ゲームオーバー！\n最終階層:${floor}階 Lv:${player.level}`);
+                location.reload();
+            }, 3000)
+        }
+        Mapdata.popEnemmyDamage = (ret) => {
+            var { damage, target } = ret;
+            var $e = document.createElement('div');
+            $e.innerText = damage;
+            $e.classList.add('damage')
+            $e.style.left = `${32 * target.x}px`;
+            $e.style.top = `${32 * target.y}px`;
+            this.root.appendChild($e);
+            setTimeout(() => {
+                $e.style.opacity = 0;
+                $e.style.top = `${32 * target.y -32}px`;
+            })
+            if (target instanceof Chest) {
+
+            } else {
+                Mapdata.messageLog(`${target.name} に ${damage} ダメージ`);
+                if (target.died) {
+                    Mapdata.messageLog(`${target.name} をたおした (Exp ${target.exp})`);
+                }
+            }
+            setTimeout(() => {
+                $e.parentNode.removeChild($e)
+            }, 500)
         }
         this.one("updated", () => {
-			setTimeout(()=>{
-				setTimeout(()=>{
-					this.root.querySelector('#titleWindow').style.opacity = 0;
-				})
-	            eventCenter.fire();
-				setTimeout(()=>{
-					this.displayTitle = false;
-					this.update()
-				},1000)
-			},2000)
+            setTimeout(() => {
+                setTimeout(() => {
+                    this.root.querySelector('#titleWindow').style.opacity = 0;
+                })
+                eventCenter.fire();
+                setTimeout(() => {
+                    this.displayTitle = false;
+                    this.update()
+                }, 1000)
+            }, 2000)
         });
         this.update();
     }
     this.one("mount", () => {
         newGame();
-        [...this.root.querySelectorAll('#smartKey > div')].forEach(e=>{
-			e.addEventListener('touchstart',(e)=>{
-		        var src = e.target;
-		        if(src.nodeName === 'IMG') src = src.parentNode;
-		        var action = src.dataset.action;
-		        if (action) {
-		            window.keyEvent({ code: action });
-			    }
-			    e.preventDefault();
-			})
-		})
+        [...this.root.querySelectorAll('#smartKey > div')].forEach(e => {
+            e.addEventListener('touchstart', (e) => {
+                var src = e.target;
+                if (src.nodeName === 'IMG') src = src.parentNode;
+                var action = src.dataset.action;
+                if (action) {
+                    window.keyEvent({ code: action });
+                }
+                e.preventDefault();
+            })
+        })
     })
     </script>
     <style scoped>
@@ -462,10 +468,10 @@
         position: absolute;
         left: -2.5vw;
         top: -7.5vw;
-        opacity:1;
-        transition: top 0.1s linear, left 0.1s linear,opacity 2s;
+        opacity: 1;
+        transition: top 0.1s linear, left 0.1s linear, opacity 2s;
         font-family: PixelMplus;
-        overflow:hidden;
+        overflow: hidden;
     }
 
     #statusWindow {
@@ -534,7 +540,7 @@
         top: 0;
         left: 0;
         z-index: 10;
-        opacity:1;
+        opacity: 1;
         transition: opacity 1s ease-in;
     }
 
@@ -559,49 +565,55 @@
         font-size: 5vh;
         color: white;
     }
+
     #smartKey {
-		width:40vw;
-		height:40vw;
-		position:fixed;
-		top:10vh;
-		right:1%;
-		opacity:0.2;
-		cursor:pointer;
+        width: 40vw;
+        height: 40vw;
+        position: fixed;
+        top: 10vh;
+        right: 1%;
+        opacity: 0.2;
+        cursor: pointer;
     }
+
     .key-wrap {
-		height:33%;
-		text-align:center;
-		display:flex;
-		justify-content: space-between;
+        height: 33%;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
     }
 
-    .key-wrap > div {
-		flex-grow:1;
+    .key-wrap>div {
+        flex-grow: 1;
     }
 
-    #topButton ,#bottomButton{
-    }
-    #leftButton ,#menuButton,#rightButton{
+    #topButton,
+    #bottomButton {}
+
+    #leftButton,
+    #menuButton,
+    #rightButton {}
+
+    .key-wrap>div>img {
+        height: 100%;
     }
 
-    .key-wrap > div > img {
-		height:100%;
+    #dummyButton>img {
+        opacity: 0;
     }
 
-    #dummyButton > img{
-		opacity:0;
+    #topButton>img {}
+
+    #leftButton>img {
+        transform: rotate(-90deg);
     }
 
-    #topButton > img {
+    #rightButton>img {
+        transform: rotate(90deg);
     }
-    #leftButton > img{
-		transform:rotate(-90deg);
-    }
-    #rightButton > img {
-		transform:rotate(90deg);
-    }
-    #bottomButton > img {
-		transform:rotate(180deg);
+
+    #bottomButton>img {
+        transform: rotate(180deg);
     }
     </style>
 </game>

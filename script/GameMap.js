@@ -46,7 +46,11 @@ class Food extends Item {
 		}
 		player.hp += point;
 		this.remove();
-		return `HPが ${point} 回復した`;
+		if(point >= 0){
+			return `HPが ${point} 回復した`;
+		}else{
+			return `HPが ${-point} 減少した`;
+		}
 	}
 }
 
@@ -67,6 +71,18 @@ class Equipment extends Item{
 		this.slot = slot;
 		this.isEquipment = true;
 		return `${this.name} をそうびした`
+	}
+	catch(){
+		if(player.items.find(item=>item.name === this.name)){
+			setTimeout(()=>{
+				Mapdata.messageLog(`${this.name} はこれ以上もてない`);
+			})
+			return;
+		}
+		setTimeout(()=>{
+			Mapdata.messageLog(`${this.name} を手に入れた`);
+		})
+		player.items.push(this);
 	}
 }
 
@@ -328,13 +344,59 @@ class Player extends Actor {
 		if(!item) return false;
 		item.catch();
     }
-    atack(){
+    getAttackTarget(){
+		var atackTable = [[1],[2]];
 		var d = this.getTarget();
-		var enemmy = Mapdata.getChip(this.x+d.x,this.y+d.y).enemmy;
-		if(!enemmy) return null;
+		var ret = [];
+		var m = Mapdata.getChip(this.x+d.x,this.y+d.y);
+		if(m.enemmy) ret.push(m.enemmy);
+		this.equipments.forEach((eq)=>{
+			if(!eq.attackSize) return;
+			var {attackSize:table} = eq;
+			var iPos = {x:-1,y:-1};
+			var posList = [];
+			(()=>{
+				for(var y = 0;y < table.length;y++){
+					for(var x = 0;x < table[y].length;x++){
+						if(table[y][x] == 2){
+							iPos = {x,y};
+							return;
+						}
+						if(table[y][x] == 1){
+							posList.push({x,y});
+						}
+					}
+				}
+			})();
+			posList.map(p=>{
+				p.x-=iPos.x;
+				p.y-=iPos.y;
+				for(var i=0;i < "↑→↓←".indexOf(this.direction);i++){
+					[p.x,p.y] = [p.y,p.x];
+					if(i%2 == 0){
+						[p.x,p.y] = [-p.x,-p.y]
+					}
+				}
+				return p;
+			}).forEach(p=>{
+				var {enemmy} = Mapdata.getChip(p.x+this.x,p.y+this.y);
+				if(enemmy) ret.push(enemmy);
+			})
+		});
+		return ret.filter((k,i,t)=>{
+			return t.indexOf(k) == i
+		});
+    }
+    atack(){
+		var targets = this.getAttackTarget();
+		var point = this.getAttackPoint();
 		return {
-			damage:enemmy.damage(this.getAttackPoint()),
-			target:enemmy,
+			list:targets.map(target=>{
+				return {
+					damage:target.damage(point),
+					target,
+				}
+			}),
 			type:'atack'
 		}
     }
