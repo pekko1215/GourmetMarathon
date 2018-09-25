@@ -4,15 +4,6 @@ var ItemData = [{
         "hp": 5,
         "chip": "",
         "rarity": 1,
-        "use":function(){
-            var point = 5;
-            if (player.hp + point >= player.maxhp) {
-                point = player.maxhp-player.hp
-            }
-            player.hp += point;
-            this.remove();
-            return `HPが${point}回復した`;
-        },
         "text": "甘くて美味しい。5回復"
     },
     {
@@ -20,15 +11,6 @@ var ItemData = [{
         "type": "use",
         "hp": 10,
         "rarity": 2,
-        "use":function(){
-            var point = 10;
-            if (player.hp + point >= player.maxhp) {
-                point = player.maxhp-player.hp
-            }
-            player.hp += point;
-            this.remove();
-            return `HPが${point}回復した`;
-        },
         "chip": "",
         "text": "しゃくしゃくとした食感がよい。10回復"
     },
@@ -38,15 +20,6 @@ var ItemData = [{
         "hp": 20,
         "chip": "",
         "rarity": 2,
-        "use":function(){
-            var point = 20;
-            if (player.hp + point >= player.maxhp) {
-                point = player.maxhp-player.hp
-            }
-            player.hp += point;
-            this.remove();
-            return `HPが${point}回復した`;
-        },
         "text": "皮ごと食べれる。甘い。20回復"
     },
     {
@@ -55,15 +28,6 @@ var ItemData = [{
         "hp": 50,
         "chip": "",
         "rarity": 3,
-        "use":function(){
-            var point = 50;
-            if (player.hp + point >= player.maxhp) {
-                point = player.maxhp-player.hp
-            }
-            player.hp += point;
-            this.remove();
-            return `HPが${point}回復した`;
-        },
         "text": "これが高級品の力だ。50回復"
     },
     {
@@ -71,15 +35,6 @@ var ItemData = [{
         "type": "use",
         "hp": 12,
         "text": "何の変哲もないきのこ。12回復",
-        "use":function(){
-            var point = 12;
-            if (player.hp + point >= player.maxhp) {
-                point = player.maxhp-player.hp
-            }
-            player.hp += point;
-            this.remove();
-            return `HPが${point}回復した`;
-        },
         "rarity": 2,
         "chip": ""
     },
@@ -308,7 +263,9 @@ var ItemData = [{
         "type": "use",
         "effect": "全回復",
         "text": "治癒の力を持った石 全てを癒す",
-        "hp":100,
+        "use":function(){
+            player.hp = player.maxhp
+        },
         "rarity": 4,
         "chip": ""
     },
